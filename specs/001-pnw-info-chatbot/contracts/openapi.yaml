@@ -1,0 +1,95 @@
+openapi: 3.1.0
+info:
+  title: PNW Information Chatbot API
+  version: 0.1.0
+  description: Public PNW general-information API. It does not accept or retain student-specific data.
+paths:
+  /v1/chat:
+    post:
+      summary: Answer a general PNW information question
+      operationId: answerQuestion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: A cited answer, context request, or safe escalation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '400':
+          description: Invalid request or a request containing student-specific information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    ChatRequest:
+      type: object
+      additionalProperties: false
+      required: [question]
+      properties:
+        question:
+          type: string
+          description: General PNW question only; users must not include student-specific information.
+          minLength: 1
+          maxLength: 2000
+        context:
+          $ref: '#/components/schemas/Context'
+    Context:
+      type: object
+      additionalProperties: false
+      description: Optional public context used only when it changes the answer.
+      properties:
+        campus: { type: string, enum: [Hammond, Westville] }
+        term: { type: string }
+        program: { type: string }
+        courseCode: { type: string }
+        academicLevel: { type: string, enum: [undergraduate, graduate] }
+    ChatResponse:
+      type: object
+      additionalProperties: false
+      required: [outcome, message, citations]
+      properties:
+        outcome:
+          type: string
+          enum: [answered, needs_context, cannot_verify, escalation_required]
+        message:
+          type: string
+          description: Plain-language answer or explanation of why a definitive answer is unavailable.
+        requiredContext:
+          type: array
+          items: { type: string, enum: [campus, term, program, courseCode, academicLevel] }
+        citations:
+          type: array
+          items: { $ref: '#/components/schemas/Citation' }
+        escalation:
+          $ref: '#/components/schemas/Escalation'
+    Citation:
+      type: object
+      additionalProperties: false
+      required: [title, url, locator]
+      properties:
+        title: { type: string }
+        url: { type: string, format: uri }
+        locator: { type: string }
+    Escalation:
+      type: object
+      additionalProperties: false
+      required: [office, reason]
+      properties:
+        office: { type: string }
+        reason: { type: string }
+        contactUrl: { type: string, format: uri }
+    Error:
+      type: object
+      additionalProperties: false
+      required: [code, message]
+      properties:
+        code: { type: string, enum: [invalid_request, student_data_not_allowed] }
+        message: { type: string }
