@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pnw-information-chatbot"
+version = "0.1.0"
+description = "Public, source-supported PNW university information chatbot"
+requires-python = ">=3.12"
+dependencies = [
+    "beautifulsoup4>=4.12",
+    "fastapi>=0.115",
+    "pypdf>=5.0",
+    "sqlalchemy>=2.0",
+    "uvicorn[standard]>=0.30",
+]
+
+[project.optional-dependencies]
+test = [
+    "httpx>=0.27",
+    "openapi-spec-validator>=0.7",
+    "pytest>=8.3",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-ra"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
