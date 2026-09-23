@@ -10,6 +10,7 @@ from datetime import date, datetime, timezone
 from enum import Enum
 from typing import Any
 
+from pgvector.sqlalchemy import Vector
 from sqlalchemy import Date, DateTime, Enum as SqlEnum, ForeignKey, JSON, String, Text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -98,6 +99,9 @@ class Evidence(Base):
     text: Mapped[str] = mapped_column(Text)
     locator: Mapped[str] = mapped_column(String(1000))
     context: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    embedding: Mapped[list[float] | None] = mapped_column(
+        Vector(768), nullable=True
+    )
 
     source_version: Mapped[SourceVersion] = relationship(back_populates="evidence")
 

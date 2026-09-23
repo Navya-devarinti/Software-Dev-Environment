@@ -2,11 +2,11 @@
 
 ## Decisions
 
-### Decision: Start with one application and a reviewed source list
+### Decision: Use a React client, FastAPI service, and PostgreSQL/pgvector retrieval store
 
-**Rationale**: The feature needs reliable answers from a known set of public PNW material, not independent web, ingestion, vector-search, and worker services. One application can expose the public interface and run an operator-invoked refresh for the approved source list.
+**Rationale**: React provides the public chat interface, FastAPI exposes the stable `/v1/chat` contract, and PostgreSQL with pgvector keeps relational provenance and semantic retrieval in one operational store. The backend can implement RAG by filtering reviewed evidence before similarity search, then applying context, freshness, conflict, privacy, and escalation rules before returning a cited answer.
 
-**Alternatives considered**: Separate frontend/API/worker services, automated crawling, and external vector stores add deployment and review work without evidence that the available corpus requires them.
+**Alternatives considered**: A server-rendered-only UI would not satisfy the selected frontend stack. A separate vector database or autonomous crawling service would split provenance and review state without being justified by the initial corpus.
 
 ### Decision: Use source-first retrieval, not a generic corpus split
 
@@ -37,3 +37,39 @@
 **Rationale**: Representative fixtures can prove the required behavior for multi-term schedules, missing campus context, incomplete extraction, stale sources, conflicts, unconfirmed alerts, and individual-case requests without needing a large production corpus.
 
 **Alternatives considered**: Happy-path-only testing would not establish safe abstention or escalation.
+
+### Decision: Use explicit API schemas separate from corpus models
+
+**Rationale**: FastAPI/Pydantic request and response models keep the public `/v1/chat` contract stable and prevent SQLAlchemy persistence details from leaking into responses. Camel-case contract fields such as `courseCode` and `requiredContext` should use explicit aliases. The four outcome values remain contract-level semantics, while conditional requirements are enforced by application rules and tests.
+
+**Alternatives considered**: Returning untyped dictionaries is shorter but weakens validation, generated documentation, and protection against accidental field disclosure.
+
+### Decision: Use short-lived SQLAlchemy sessions with PostgreSQL and pgvector integrity enabled
+
+**Rationale**: One SQLAlchemy engine and session factory with a short-lived session per operation/request fits the reviewed corpus. PostgreSQL provides the required relational integrity and concurrent access, while pgvector stores embeddings beside source/version/evidence metadata for filtered similarity search. Refresh writes must use explicit commit/rollback boundaries, and Docker Compose should provide a reproducible local PostgreSQL/pgvector service.
+
+**Alternatives considered**: A global session risks leaked transactions and cross-request state; an embedded file database does not satisfy the application database requirement; a separate search database would duplicate provenance and complicate consistency.
+
+### Decision: Use hybrid RAG retrieval with metadata gating
+
+**Rationale**: Embedding similarity finds semantically relevant official passages, but it must never decide eligibility by itself. Query retrieval should first or concurrently apply structured filters for current review status, approved source identity, effective dates, and matching campus, program, course, term, and academic level. The answer generator receives only eligible evidence plus locators and context, and the rules layer can abstain when retrieval is empty, incomplete, stale, ambiguous, or conflicting.
+
+**Alternatives considered**: Pure keyword search misses paraphrased questions; unrestricted vector search can surface stale or context-mismatched facts; model-only answers cannot provide the required provenance.
+
+### Decision: Run the stack with Docker Compose
+
+**Rationale**: Docker Compose provides a repeatable local environment for the React frontend, FastAPI backend, and PostgreSQL image with pgvector. Configuration remains environment-based, and the database volume is local-only. Production deployment may use an equivalent container platform without changing the service boundaries.
+
+**Alternatives considered**: Host-installed services create version drift and make pgvector setup inconsistent; Kubernetes is unnecessary for the initial single-application scope.
+
+### Decision: Extract structural evidence and abstain on incomplete parsing
+
+**Rationale**: HTML extraction must preserve headings, links, and table row/header relationships. PDF extraction should run page-by-page with page/section locators and mark empty or suspicious output incomplete. BeautifulSoup does not execute JavaScript and pypdf does not perform OCR, so dynamically revealed or scanned content must be supplied through an approved capture or withheld/escalated.
+
+**Alternatives considered**: Flattened text or generic chunks lose schedule, policy, and prerequisite context; automatic OCR or unrestricted rendering would add an unreviewed dependency and new quality risks.
+
+### Decision: Keep quantitative operational targets as approval items
+
+**Rationale**: The specification leaves response time, availability, coverage, accuracy, and satisfaction thresholds open. Define the metrics and collect a pilot baseline before stakeholders approve targets; until then, gate implementation on provenance, privacy, contract, freshness, conflict, extraction-integrity, and safe-abstention behavior rather than guessed numbers.
+
+**Alternatives considered**: Arbitrary latency or uptime values would create false release criteria and are not supported by the current requirements.

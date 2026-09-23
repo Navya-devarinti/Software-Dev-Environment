@@ -43,6 +43,7 @@ A citable extracted section of a reviewed source version.
 | `text` | Extracted public content needed for retrieval and answer drafting. |
 | `locator` | PDF page/section, webpage heading, table row, or catalog entry. |
 | `context` | Only applicable public qualifiers: term, campus, program/college, course, academic level, deadline type, and conditions. |
+| `embedding` | pgvector embedding for semantic retrieval; it never replaces source status or context eligibility checks. |
 
 ### OfficeRoute
 
@@ -58,6 +59,7 @@ An approved public route for issues the application cannot answer.
 ## Answer rules
 
 - A factual answer may use only `Evidence` from a `current` `SourceVersion` whose public context matches the question.
+- Semantic retrieval may rank evidence by embedding similarity, but structured eligibility filters must exclude unreviewed, stale, incomplete, superseded, or context-mismatched evidence before answer generation.
 - A deadline must include its term, deadline type, and applicable conditions from `context`.
 - If required context is missing, ask for it instead of guessing.
 - If relevant current evidence is incomplete, stale by review frequency, ambiguous, or conflicts with another relevant authoritative source, do not give a definitive fact. State the limitation and use an `OfficeRoute` when supported; otherwise use the Dean of Students fallback.

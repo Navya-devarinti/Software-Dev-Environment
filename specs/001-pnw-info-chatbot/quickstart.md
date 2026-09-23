@@ -4,9 +4,32 @@ This guide validates the planned behavior with a small set of representative pub
 
 ## Prerequisites
 
-- A local database populated with approved fixture sources and office routes.
+- Docker and Docker Compose.
+- Node.js and npm for the React frontend if running it outside its container.
+- Python 3.12 for backend tooling and direct pytest execution.
+- Copy local configuration:
+
+  ```bash
+  cp .env.example .env
+  ```
+
+- Start the React frontend, FastAPI backend, and PostgreSQL/pgvector database:
+
+  ```bash
+  docker compose up --build
+  ```
+
+- A PostgreSQL database populated with approved fixture sources, embeddings, and office routes.
 - Fixtures for: a multi-term schedule table, a policy PDF, a catalog prerequisite, two conflicting sources, and a timestamped official alert.
-- The application running locally.
+- The application running locally through Docker Compose.
+
+Run backend tests with `python -m pytest`. Run one module with
+`python -m pytest tests/test_foundation.py`, or one test with
+`python -m pytest tests/test_foundation.py::test_name`. For direct backend
+development, install the package and test dependencies with
+`python -m pip install -e '.[test]'`, then run
+`uvicorn app.main:app --reload`; point `DATABASE_URL` at the PostgreSQL/pgvector
+service provided by Docker Compose.
 
 ## Validation scenarios
 
@@ -22,4 +45,4 @@ Use the request format in [contracts/openapi.yaml](contracts/openapi.yaml) and v
 
 ## Available checks
 
-Once implementation exists, run its pytest suite and API contract checks. Before deployment, run the stakeholder-approved evaluation set and obtain the unresolved SC-006 quantitative release thresholds.
+Before deployment, run the stakeholder-approved evaluation set and obtain the unresolved SC-006 quantitative release thresholds. Do not substitute guessed latency or availability targets for stakeholder approval.
