@@ -50,7 +50,7 @@ description: "Implementation tasks for the PNW University Information Chatbot"
 
 - [X] T010 Implement the PostgreSQL engine, short-lived SQLAlchemy session lifecycle, transaction helpers, pgvector extension initialization, and schema initialization in `app/corpus/database.py`
 - [X] T011 [P] Extend the relational models for `Source`, `SourceVersion`, `Evidence`, and `OfficeRoute` with PostgreSQL-compatible constraints and a pgvector embedding column in `app/corpus/models.py`
-- [ ] T012 [P] Create Alembic configuration and the initial PostgreSQL/pgvector migration in `alembic.ini`, `migrations/env.py`, and `migrations/versions/`
+- [X] T012 [P] Create Alembic configuration and the initial PostgreSQL/pgvector migration in `alembic.ini`, `migrations/env.py`, and `migrations/versions/`
 - [X] T013 Implement source-version eligibility, freshness cadence, effective-period, and current-status checks in `app/rules/freshness.py`
 - [X] T014 [P] Implement citation construction exclusively from stored source title, URL, and evidence locator in `app/rules/citations.py`
 - [X] T015 [P] Implement public context validation for `campus`, `term`, `program`, `courseCode`, and `academicLevel` in `app/rules/context.py`
@@ -80,16 +80,16 @@ description: "Implementation tasks for the PNW University Information Chatbot"
 
 ### Tests for User Story 1
 
-- [ ] T029 [P] [US1] Add term-aware deadline retrieval tests for date, type, conditions, citations, and missing-term clarification in `tests/test_deadlines.py`
-- [ ] T030 [P] [US1] Add deadline safety tests for stale, incomplete, unreviewed, superseded, and expired schedule evidence in `tests/test_deadline_safety.py`
+- [X] T029 [P] [US1] Add term-aware deadline retrieval tests for date, type, conditions, citations, and missing-term clarification in `tests/test_deadlines.py`
+- [X] T030 [P] [US1] Add deadline safety tests for stale, incomplete, unreviewed, superseded, and expired schedule evidence in `tests/test_deadline_safety.py`
 
 ### Implementation for User Story 1
 
-- [ ] T031 [US1] Implement term-aware schedule evidence selection that keeps term, deadline type, date, refund conditions, and source locator together in `app/corpus/retrieval.py`
-- [ ] T032 [US1] Implement deadline decision rules requiring term context and current reviewed evidence in `app/rules/deadlines.py`
-- [ ] T033 [US1] Implement cited plain-language deadline and safe schedule-office referral rendering in `app/api/answers.py`
-- [ ] T034 [US1] Wire deadline classification, retrieval, rules, and response rendering through `POST /v1/chat` in `app/api/chat.py`
-- [ ] T035 [US1] Render deadline answers, missing-context prompts, citations, and safe referrals in `frontend/src/components/DeadlineAnswer.tsx` and `frontend/src/App.tsx`
+- [X] T031 [US1] Implement term-aware schedule evidence selection that keeps term, deadline type, date, refund conditions, and source locator together in `app/corpus/retrieval.py`
+- [X] T032 [US1] Implement deadline decision rules requiring term context and current reviewed evidence in `app/rules/deadlines.py`
+- [X] T033 [US1] Implement cited plain-language deadline and safe schedule-office referral rendering in `app/api/answers.py`
+- [X] T034 [US1] Wire deadline classification, retrieval, rules, and response rendering through `POST /v1/chat` in `app/api/chat.py`
+- [X] T035 [US1] Render deadline answers, missing-context prompts, citations, and safe referrals in `frontend/src/components/DeadlineAnswer.tsx` and `frontend/src/App.tsx`
 
 **Checkpoint**: User Story 1 satisfies all deadline acceptance scenarios through the API and React client.
 
@@ -108,11 +108,11 @@ description: "Implementation tasks for the PNW University Information Chatbot"
 
 ### Implementation for User Story 2
 
-- [ ] T038 [US2] Implement policy/procedure retrieval across reviewed related sources without losing source relationships or locators in `app/corpus/retrieval.py`
-- [ ] T039 [US2] Implement plain-language policy summarization with material qualifications, next steps, and safe abstention in `app/rules/policies.py`
-- [ ] T040 [US2] Implement policy answer and individual-decision escalation rendering with stored citations in `app/api/answers.py`
-- [ ] T041 [US2] Wire policy/procedure classification and retrieval through `POST /v1/chat` in `app/api/chat.py`
-- [ ] T042 [US2] Render policy explanations, linked citations, next steps, and escalation states in `frontend/src/components/PolicyAnswer.tsx` and `frontend/src/App.tsx`
+- [X] T038 [US2] Implement policy/procedure retrieval across reviewed related sources without losing source relationships or locators in `app/corpus/retrieval.py`
+- [X] T039 [US2] Implement plain-language policy summarization with material qualifications, next steps, and safe abstention in `app/rules/policies.py`
+- [X] T040 [US2] Implement policy answer and individual-decision escalation rendering with stored citations in `app/api/answers.py`
+- [X] T041 [US2] Wire policy/procedure classification and retrieval through `POST /v1/chat` in `app/api/chat.py`
+- [X] T042 [US2] Render policy explanations, linked citations, next steps, and escalation states in `frontend/src/components/PolicyAnswer.tsx` and `frontend/src/App.tsx`
 
 **Checkpoint**: User Stories 1 and 2 both work independently, with policy answers never replacing authorized decisions.
 
@@ -126,16 +126,16 @@ description: "Implementation tasks for the PNW University Information Chatbot"
 
 ### Tests for User Story 3
 
-- [ ] T043 [P] [US3] Add catalog prerequisite, offering, campus, and academic-level retrieval tests in `tests/test_academics.py`
-- [ ] T044 [P] [US3] Add program/graduation context and individualized-determination safety tests in `tests/test_graduation_safety.py`
+- [X] T043 [P] [US3] Add catalog prerequisite, offering, campus, and academic-level retrieval tests in `tests/test_academics.py`
+- [X] T044 [P] [US3] Add program/graduation context and individualized-determination safety tests in `tests/test_graduation_safety.py`
 
 ### Implementation for User Story 3
 
-- [ ] T045 [US3] Implement catalog evidence retrieval that groups prerequisites, offerings, program requirements, campus tags, and catalog locators in `app/corpus/retrieval.py`
-- [ ] T046 [US3] Implement academic context requirements and general-versus-individual determination rules in `app/rules/academics.py`
-- [ ] T047 [US3] Implement cited academic explanations and graduation limitation/referral rendering in `app/api/answers.py`
-- [ ] T048 [US3] Wire course, program, and graduation classification, retrieval, and rules through `POST /v1/chat` in `app/api/chat.py`
-- [ ] T049 [US3] Render prerequisite/program explanations, context requests, citations, and advisor referrals in `frontend/src/components/AcademicAnswer.tsx` and `frontend/src/App.tsx`
+- [X] T045 [US3] Implement catalog evidence retrieval that groups prerequisites, offerings, program requirements, campus tags, and catalog locators in `app/corpus/retrieval.py`
+- [X] T046 [US3] Implement academic context requirements and general-versus-individual determination rules in `app/rules/academics.py`
+- [X] T047 [US3] Implement cited academic explanations and graduation limitation/referral rendering in `app/api/answers.py`
+- [X] T048 [US3] Wire course, program, and graduation classification, retrieval, and rules through `POST /v1/chat` in `app/api/chat.py`
+- [X] T049 [US3] Render prerequisite/program explanations, context requests, citations, and advisor referrals in `frontend/src/components/AcademicAnswer.tsx` and `frontend/src/App.tsx`
 
 **Checkpoint**: User Stories 1–3 answer supported general questions with required context and safely route individualized academic decisions.
 
